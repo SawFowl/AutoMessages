@@ -18,8 +18,6 @@ import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.reference.ConfigurationReference;
 import org.spongepowered.configurate.reference.ValueReference;
 import org.spongepowered.plugin.PluginContainer;
@@ -32,7 +30,8 @@ import net.kyori.adventure.audience.Audience;
 import sawfowl.automessages.configure.Config;
 import sawfowl.automessages.configure.Locales;
 import sawfowl.localeapi.api.TextUtils;
-import sawfowl.localeapi.event.LocaleServiseEvent;
+import sawfowl.localeapi.api.event.LocaleServiseEvent;
+import sawfowl.localeapi.api.serializetools.SerializeOptions;
 
 @Plugin("automessages")
 public class AutoMessages {
@@ -40,7 +39,6 @@ public class AutoMessages {
 	private PluginContainer pluginContainer;
 	private Path configDir;
 	private static Logger logger;
-	private ConfigurationOptions configurationOptions;
 	private ConfigurationReference<CommentedConfigurationNode> mainConfigReference;
 	private ValueReference<Config, CommentedConfigurationNode> mainConfig;
 	private Locales locales;
@@ -59,7 +57,6 @@ public class AutoMessages {
 
 	@Listener
 	public void onServerPreInit(LocaleServiseEvent.Construct event) {
-		configurationOptions = event.getLocaleService().getConfigurationOptions();
 		load();
 		locales = new Locales(event.getLocaleService(), getConfig().isJsonLocales());
 		Sponge.eventManager().registerListeners(pluginContainer, locales);
@@ -89,7 +86,7 @@ public class AutoMessages {
 
 	private void load() {
 		try {
-			if(mainConfigReference == null || mainConfig == null) mainConfigReference = HoconConfigurationLoader.builder().path(configDir).defaultOptions(configurationOptions).build().loadToReference();
+			if(mainConfigReference == null || mainConfig == null) mainConfigReference = SerializeOptions.createHoconConfigurationLoader(2).path(configDir).build().loadToReference();
 			mainConfigReference.load();
 			mainConfig = mainConfigReference.referenceTo(Config.class);
 			if(!configDir.toFile().exists()) mainConfigReference.save();

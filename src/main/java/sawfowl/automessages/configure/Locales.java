@@ -16,8 +16,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import sawfowl.localeapi.api.ConfigTypes;
 import sawfowl.localeapi.api.LocaleService;
-import sawfowl.localeapi.event.LocaleEvent;
-import sawfowl.localeapi.utils.AbstractLocaleUtil;
+import sawfowl.localeapi.api.PluginLocale;
+import sawfowl.localeapi.api.event.LocaleEvent;
 
 public class Locales {
 
@@ -65,16 +65,26 @@ public class Locales {
 	}
 
 	public Component getText(Locale locale, Object... path) {
-		return getAbstractLocaleUtil(locale).getComponent(json, path);
+		return getAbstractLocaleUtil(locale).getComponent(path);
 	}
 
 	public List<Component> getListTexts(Locale locale, Object... path) {
-		return getAbstractLocaleUtil(locale).getListComponents(json, path);
+		return getAbstractLocaleUtil(locale).getListComponents(path);
 	}
 
 	private void generateDefault() {
 		Locale locale = org.spongepowered.api.util.locale.Locales.DEFAULT;
-		boolean save = checkList(locale, Arrays.asList(toText("&bDemo clickable message with a link to the developer's discord server").clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")), toText("&3===========================\n&eA simple message with line breaks.\n&3==========================="), toText("&2Message with pop-up text display on hovering").hoverEvent(HoverEvent.showText(toText("&e&lHello, world!"))), toText("&#0e93d2T&#299fd7h&#44abdce &#5eb7e1g&#79c3e6r&#94cfeba&#afdbf0d&#c9e7f5i&#e4f3fae&#ffffffn&#fae7e7t &#f5cfcfm&#f0b7b7e&#eb9f9fs&#e68787s&#e16f6fa&#dc5757g&#d73f3fe&#d22727."), toText("&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=\n&eMessage with a combination of the functionality of other options.\n&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=").clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")).hoverEvent(HoverEvent.showText(toText("&bClick to open the link")))), null, "Messages");
+		boolean save = checkList(locale, Arrays.asList(
+			toText("&bDemo clickable message with a link to the developer's discord server")
+				.clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")),
+			toText("&3===========================\n&eA simple message with line breaks.\n&3==========================="),
+			toText("&2Message with pop-up text display on hovering")
+				.hoverEvent(HoverEvent.showText(toText("&e&lHello, world!"))),
+			toText("&#0e93d2T&#299fd7h&#44abdce &#5eb7e1g&#79c3e6r&#94cfeba&#afdbf0d&#c9e7f5i&#e4f3fae&#ffffffn&#fae7e7t &#f5cfcfm&#f0b7b7e&#eb9f9fs&#e68787s&#e16f6fa&#dc5757g&#d73f3fe&#d22727."),
+			toText("&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=\n&eMessage with a combination of the functionality of other options.\n&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=")
+				.clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9"))
+				.hoverEvent(HoverEvent.showText(toText("&bClick to open the link")))
+		), null, "Messages");
 		save = check(locale, toText("&aPlugin reloaded"), null, "ReloadMessage") || save;
 		localizedMap.put(locale, new LocalizedMessages(getListTexts(locale, "Messages")));
 		if(save) save(locale);
@@ -82,13 +92,23 @@ public class Locales {
 
 	private void generateRu() {
 		Locale locale = org.spongepowered.api.util.locale.Locales.RU_RU;
-		boolean save = checkList(locale, Arrays.asList(toText("&bДемонстрационное кликабельное сообщение с ссылкой на дискорд сервер разработчика").clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")), toText("&3===========================\n&eПростое сообщение с переносом строк.\n&3==========================="), toText("&2Сообщение с отображением всплывающего текста при наведении").hoverEvent(HoverEvent.showText(toText("&e&lПривет мир!"))), toText("&#fb0000С&#fb1a1aо&#fc3333о&#fc4d4dб&#fd6666щ&#fd8080е&#fd9999н&#feb3b3и&#feccccе &#ffe6e6с &#ffffffг&#e7f1f6р&#cee3edа&#b6d5e4д&#9dc7dbи&#85b9d3е&#6dabcaн&#549dc1т&#3c8fb8о&#2381afм&#0b73a6."), toText("&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=\n&eСообщение с комбинацией функционала других вариантов.\n&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=").clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")).hoverEvent(HoverEvent.showText(toText("&bКлик для открытия ссылки.")))), null, "Messages");
+		boolean save = checkList(locale, Arrays.asList(
+			toText("&bДемонстрационное кликабельное сообщение с ссылкой на дискорд сервер разработчика")
+				.clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9")),
+			toText("&3===========================\n&eПростое сообщение с переносом строк.\n&3==========================="),
+			toText("&2Сообщение с отображением всплывающего текста при наведении")
+				.hoverEvent(HoverEvent.showText(toText("&e&lПривет мир!"))),
+			toText("&#fb0000С&#fb1a1aо&#fc3333о&#fc4d4dб&#fd6666щ&#fd8080е&#fd9999н&#feb3b3и&#feccccе &#ffe6e6с &#ffffffг&#e7f1f6р&#cee3edа&#b6d5e4д&#9dc7dbи&#85b9d3е&#6dabcaн&#549dc1т&#3c8fb8о&#2381afм&#0b73a6."),
+			toText("&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=\n&eСообщение с комбинацией функционала других вариантов.\n&#0e93d2&m=&#2190ca&m=&#338cc1&m=&#4689b9&m=&#5885b1&m=&#6b82a8&m=&#7d7ea0&m=&#907b98&m=&#a27790&m=&#b57487&m=&#c7707f&m=&#da6d77&m=&#ec696e&m=&#ff6666&m=&#ec696e&m=&#da6d77&m=&#c7707f&m=&#b57487&m=&#a27790&m=&#907b98&m=&#7d7ea0&m=&#6b82a8&m=&#5885b1&m=&#4689b9&m=&#338cc1&m=&#2190ca&m=&#0e93d2&m=")
+				.clickEvent(ClickEvent.openUrl("https://discord.gg/7xnZGSYJH9"))
+				.hoverEvent(HoverEvent.showText(toText("&bКлик для открытия ссылки.")))
+		), null, "Messages");
 		save = check(locale, toText("&aПлагин перезагружен"), null, "ReloadMessage");
 		localizedMap.put(locale, new LocalizedMessages(getListTexts(locale, "Messages")));
 		if(save) save(locale);
 	}
 
-	private AbstractLocaleUtil getAbstractLocaleUtil(Locale locale) {
+	private PluginLocale getAbstractLocaleUtil(Locale locale) {
 		return localeService.getPluginLocales(pluginid).getOrDefault(locale, localeService.getPluginLocales(pluginid).get(org.spongepowered.api.util.locale.Locales.DEFAULT));
 	}
 
